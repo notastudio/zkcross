@@ -61,5 +61,3 @@ template Send(M, w, ba, bp) {
     }
     aggUpdateVerify.out === 1;
 }
-
-component main { public [ aggNote, vIn, vOutNote, prover ] } = Send(/*M*/ 3, /*w*/ 121);
