@@ -105,4 +105,7 @@ dist
 
 .vscode
 
+circuits/out/
 circuits/1024/out/
+circuits/2048/out/
+circuits/3072/out/
