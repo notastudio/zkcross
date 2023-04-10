@@ -3,9 +3,9 @@ pragma circom 2.1.5;
 include "MiMCW.circom";
 include "RsaAcc.circom";
 
-template Send(M, w) {
+template Send(M, w, ba, bp) {
     // public
-    signal input aggNote[10];
+    signal input aggNote[ba];
     signal input vIn;
     signal input vOutNote;
     signal input prover; // non-malleability
@@ -14,7 +14,7 @@ template Send(M, w) {
     signal input LOutNoteRd[M]; // field
     signal input LOutNoteSn[M]; // a w-bit prime number
     signal input NOutNote;
-    signal input obfsPrime[7];
+    signal input obfsPrime[bp];
 
     // masks = [1] * NOutNote + [0] * (M-NOutNote)
     signal masks[M];
@@ -36,11 +36,11 @@ template Send(M, w) {
     vIn === vOutNote;
 
     component aggUpdateVerify = AggUpdateVerify(M, w);
-    for (var i = 0; i < 10; i += 1) {
+    for (var i = 0; i < ba; i += 1) {
         aggUpdateVerify.agg[i] <== aggNote[i];
     }
     // Verification of the actual bit length of obfsPrime is omitted
-    for (var i = 0; i < 7; i += 1) {
+    for (var i = 0; i < bp; i += 1) {
         aggUpdateVerify.obfs[i] <== obfsPrime[i];
     }
 

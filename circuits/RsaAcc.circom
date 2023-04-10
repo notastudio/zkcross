@@ -35,10 +35,12 @@ template Product(M, w) {
 // Verify: xstar * obfs == agg, xstar is product of x
 template AggUpdateVerify(M, w) {
     signal input x[M];
-    signal input obfs[7];
-    signal input agg[10];
+    signal input obfs[bp];
+    signal input agg[ba];
     signal output xstar[M]; // x*
     signal output out;
+
+    assert(bp + M == ba);
 
     component product = Product(M, w);
     for (var i = 0; i < M; i += 1) {
@@ -48,16 +50,16 @@ template AggUpdateVerify(M, w) {
         xstar[i] <== product.out[i];
     }
 
-    component mult = BigMult(w, M, 7);
+    component mult = BigMult(w, M, bp);
     for (var i = 0; i < M; i += 1) {
         mult.a[i] <== product.out[i];
     }
-    for (var i = 0; i < 7; i += 1) {
+    for (var i = 0; i < bp; i += 1) {
         mult.b[i] <== obfs[i];
     }
 
-    component isEqual = BigIsEqual(10);
-    for (var j = 0; j < 10; j += 1) {
+    component isEqual = BigIsEqual(ba);
+    for (var j = 0; j < ba; j += 1) {
         isEqual.in[0][j] <== agg[j];
         isEqual.in[1][j] <== mult.out[j];
     }
@@ -97,14 +99,14 @@ template AggUpdateVerify(M, w) {
 
 // proof**x === A
 template MemVerify(M, w) {
-    signal input A[9];
-    signal input proof[9];
+    signal input A[bAcc];
+    signal input proof[bAcc];
     signal input x[M];
-    signal input modulus[9];
+    signal input modulus[bAcc];
     signal output out;
 
-    component modexp = PowerMod(w, 9, M);
-    for (var i = 0; i < 9; i += 1) {
+    component modexp = PowerMod(w, bAcc, M);
+    for (var i = 0; i < bAcc; i += 1) {
         modexp.base[i] <== proof[i];
         modexp.modulus[i] <== modulus[i];
     }
@@ -112,8 +114,8 @@ template MemVerify(M, w) {
         modexp.exp[i] <== x[i];
     }
 
-    component isEqual = BigIsEqual(9);
-    for (var i = 0; i < 9; i += 1) {
+    component isEqual = BigIsEqual(bAcc);
+    for (var i = 0; i < bAcc; i += 1) {
         isEqual.in[0][i] <== A[i];
         isEqual.in[1][i] <== modexp.out[i];
     }
@@ -122,19 +124,19 @@ template MemVerify(M, w) {
 
 // A**a * B**x === g
 template NonMemVerify(M, w) {
-    signal input g[9];
-    signal input A[9];
+    signal input g[bAcc];
+    signal input A[bAcc];
     signal input a[M]; // part of proof
-    signal input B[9]; // part of proof
+    signal input B[bAcc]; // part of proof
     signal input x[M];
-    signal input modulus[9];
+    signal input modulus[bAcc];
     signal output out;
 
-    component modexp1 = PowerMod(w, 9, M);
-    component modexp2 = PowerMod(w, 9, M);
-    component mul = BigMultModP(w, 9, 9, 9);
+    component modexp1 = PowerMod(w, bAcc, M);
+    component modexp2 = PowerMod(w, bAcc, M);
+    component mul = BigMultModP(w, bAcc, bAcc, bAcc);
 
-    for (var i = 0; i < 9; i += 1) {
+    for (var i = 0; i < bAcc; i += 1) {
         modexp1.base[i] <== A[i];
         modexp1.modulus[i] <== modulus[i];
         modexp2.base[i] <== B[i];
@@ -145,14 +147,14 @@ template NonMemVerify(M, w) {
         modexp2.exp[i] <== x[i];
     }
 
-    for (var i = 0; i < 9; i += 1) {
+    for (var i = 0; i < bAcc; i += 1) {
         mul.a[i] <== modexp1.out[i];
         mul.b[i] <== modexp2.out[i];
         mul.p[i] <== modulus[i];
     }
 
-    component isEqual = BigIsEqual(9);
-    for (var i = 0; i < 9; i += 1) {
+    component isEqual = BigIsEqual(bAcc);
+    for (var i = 0; i < bAcc; i += 1) {
         isEqual.in[0][i] <== g[i];
         isEqual.in[1][i] <== mul.out[i];
     }

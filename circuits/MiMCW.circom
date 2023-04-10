@@ -1,7 +1,7 @@
 pragma circom 2.1.2;
 
-include "../../node_modules/circomlib/circuits/mimc.circom";
-include "../../node_modules/circomlib/circuits/bitify.circom";
+include "../node_modules/circomlib/circuits/mimc.circom";
+include "../node_modules/circomlib/circuits/bitify.circom";
 
 template Num2BitsDrop(n) {
     signal input in;

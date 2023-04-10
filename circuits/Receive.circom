@@ -3,16 +3,16 @@ pragma circom 2.1.5;
 include "MiMCW.circom";
 include "RsaAcc.circom";
 
-template Receive(M, w) {
+template Receive(M, w, ba, bp, bAcc) {
     // public
-    signal input modulusANote[9];
-    signal input ANote[9];
-    signal input aggNote[10];
+    signal input modulusANote[bAcc];
+    signal input ANote[bAcc];
+    signal input aggNote[ba];
 
-    signal input gASn[9];
-    signal input modulusASn[9];
-    signal input ASn[9];
-    signal input aggSn[10];
+    signal input gASn[bAcc];
+    signal input modulusASn[bAcc];
+    signal input ASn[bAcc];
+    signal input aggSn[ba];
 
     signal input vOut;
 
@@ -28,11 +28,11 @@ template Receive(M, w) {
     signal input LOutNoteSn[M]; // a w-bit prime number
     signal input NOutNote;
 
-    signal input PNote[9];
+    signal input PNote[bAcc];
     signal input PSn_a[M];
-    signal input PSn_B[9];
+    signal input PSn_B[bAcc];
 
-    signal input obfsPrime[2][7]; // obfsPrime[0] for ASn, obfsPrime[1] for ANote
+    signal input obfsPrime[2][bp]; // obfsPrime[0] for ASn, obfsPrime[1] for ANote
 
     signal masksIn[M];
     signal masksOut[M];
@@ -67,19 +67,19 @@ template Receive(M, w) {
         invIn[i].in <== masksIn[i];
         aggUpdateVerifyInSn.x[i] <== invIn[i].out * 1 + masksIn[i] * LInNoteSn[i]; // i.e. masksIn[i] == 1 ? LInNoteSn[i] : 1
     }
-    for (var i = 0; i < 7; i += 1) {
+    for (var i = 0; i < bp; i += 1) {
         aggUpdateVerifyInSn.obfs[i] <== obfsPrime[0][i];
     }
-    for (var i = 0; i < 10; i += 1) {
+    for (var i = 0; i < ba; i += 1) {
         aggUpdateVerifyInSn.agg[i] <== aggSn[i];
     }
     aggUpdateVerifyInSn.out === 1;
 
     component aggUpdateVerifyOutNote = AggUpdateVerify(M, w);
-    for (var i = 0; i < 7; i += 1) {
+    for (var i = 0; i < bp; i += 1) {
         aggUpdateVerifyOutNote.obfs[i] <== obfsPrime[1][i];
     }
-    for (var i = 0; i < 10; i += 1) {
+    for (var i = 0; i < ba; i += 1) {
         aggUpdateVerifyOutNote.agg[i] <== aggNote[i];
     }
     component invOut[M];
@@ -112,7 +112,7 @@ template Receive(M, w) {
 
         productOfInNote.x[i] <== invIn[i].out * 1 + masksIn[i] * mimcIn[i].out; // i.e. masksIn[i] == 1 ? mimcIn[i].out : 1
     }
-    for (var i = 0; i < 9; i += 1) {
+    for (var i = 0; i < bAcc; i += 1) {
         memVerify.A[i] <== ANote[i];
         memVerify.proof[i] <== PNote[i];
         memVerify.modulus[i] <== modulusANote[i];
@@ -122,7 +122,7 @@ template Receive(M, w) {
     }
     memVerify.out === 1;
 
-    for (var i = 0; i < 9; i += 1) {
+    for (var i = 0; i < bAcc; i += 1) {
         nonMemVerify.g[i] <== gASn[i];
         nonMemVerify.A[i] <== ASn[i];
         nonMemVerify.B[i] <== PSn_B[i];
