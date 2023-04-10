@@ -33,7 +33,7 @@ template Product(M, w) {
 }
 
 // Verify: xstar * obfs == agg, xstar is product of x
-template AggUpdateVerify(M, w) {
+template AggUpdateVerify(M, w, bp, ba) {
     signal input x[M];
     signal input obfs[bp];
     signal input agg[ba];
@@ -98,7 +98,7 @@ template AggUpdateVerify(M, w) {
 }
 
 // proof**x === A
-template MemVerify(M, w) {
+template MemVerify(M, w, bAcc) {
     signal input A[bAcc];
     signal input proof[bAcc];
     signal input x[M];
@@ -123,7 +123,7 @@ template MemVerify(M, w) {
 }
 
 // A**a * B**x === g
-template NonMemVerify(M, w) {
+template NonMemVerify(M, w, bAcc) {
     signal input g[bAcc];
     signal input A[bAcc];
     signal input a[M]; // part of proof

@@ -61,7 +61,7 @@ template Receive(M, w, ba, bp, bAcc) {
     sumsVInNote[M - 1] === vOut + sumsVOutNote[M - 1];
 
     component invIn[M];
-    component aggUpdateVerifyInSn = AggUpdateVerify(M, w);
+    component aggUpdateVerifyInSn = AggUpdateVerify(M, w, bp, ba);
     for (var i = 0; i < M; i += 1) {
         invIn[i] = IsZero();
         invIn[i].in <== masksIn[i];
@@ -75,7 +75,7 @@ template Receive(M, w, ba, bp, bAcc) {
     }
     aggUpdateVerifyInSn.out === 1;
 
-    component aggUpdateVerifyOutNote = AggUpdateVerify(M, w);
+    component aggUpdateVerifyOutNote = AggUpdateVerify(M, w, bp, ba);
     for (var i = 0; i < bp; i += 1) {
         aggUpdateVerifyOutNote.obfs[i] <== obfsPrime[1][i];
     }
@@ -99,8 +99,8 @@ template Receive(M, w, ba, bp, bAcc) {
     }
     aggUpdateVerifyOutNote.out === 1;
 
-    component memVerify = MemVerify(M, w);
-    component nonMemVerify = NonMemVerify(M, w);
+    component memVerify = MemVerify(M, w, bAcc);
+    component nonMemVerify = NonMemVerify(M, w, bAcc);
 
     component mimcIn[M];
     component productOfInNote = Product(M, w);

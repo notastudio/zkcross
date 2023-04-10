@@ -35,7 +35,7 @@ template Send(M, w, ba, bp) {
 
     vIn === vOutNote;
 
-    component aggUpdateVerify = AggUpdateVerify(M, w);
+    component aggUpdateVerify = AggUpdateVerify(M, w, bp, ba);
     for (var i = 0; i < ba; i += 1) {
         aggUpdateVerify.agg[i] <== aggNote[i];
     }
