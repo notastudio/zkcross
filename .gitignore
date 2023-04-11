@@ -105,7 +105,8 @@ dist
 
 .vscode
 
-json
+json/*
+!json/.gitkeep
 
 circuits/out/
 circuits/1024/out/
