@@ -16,7 +16,7 @@ const bp = {
 };
 const M = 3;
 
-const mimc = mkMimc(`${zkout}/MiMCHasher_js/MiMCHasher.wasm`, `${zkout}/MiMCHasher_0001.zkey`);
+const mimc = mkMimc(`../circuits/out/MiMCHasher_js/MiMCHasher.wasm`, `../circuits/out/MiMCHasher_0001.zkey`);
 
 async function generateNote(v) {
     const sn = await generateLargePrime(w);
@@ -67,7 +67,7 @@ async function testSend(ANote, availableNotes, vArr) {
         obfsPrime: numberToArray(obfsPrime, w, 7),
     };
 
-    fs.writeFileSync('./inputSend.json', JSON.stringify(input, null, 2), 'utf-8');
+    fs.writeFileSync('../json/inputSend.json', JSON.stringify(input, null, 2), 'utf-8');
 
     console.time('proof for Send');
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(input, `${zkout}/Send_js/Send.wasm`, `${zkout}/Send_0001.zkey`);
@@ -152,7 +152,7 @@ async function testReceive(ANote, ASn, availableNotes, inNotes, vArr, vOut) {
         obfsPrime: obfsPrimeArr.map(x => numberToArray(x, w, 7)),
     }
 
-    fs.writeFileSync('./inputReceive.json', JSON.stringify(input, null, 2), 'utf-8');
+    fs.writeFileSync('../json/inputReceive.json', JSON.stringify(input, null, 2), 'utf-8');
 
     console.time('proof for Receive');
     const { proof, publicSignals } = await snarkjs.groth16.fullProve(input, `${zkout}/Receive_js/Receive.wasm`, `${zkout}/Receive_0001.zkey`);
