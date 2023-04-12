@@ -7,6 +7,8 @@ const { mod, isPrime, generateLargePrime, generateTwoLargeDistinctPrimes, xgcd, 
 
 BigInt.prototype.toJSON = function () { return this.toString(); }
 
+const verbose = false;
+
 const w = 121;
 const M = 3;
 const ba = {
@@ -89,12 +91,12 @@ async function testSend(nBits, ANote, availableNotes, vArr) {
     }
     const obfsPrime = await generateLargePrime(bpBits[nBits][NOutNote]);
 
-    console.log('new notes: ', outNotes);
-    console.log('obfsPrime: ', obfsPrime);
+    verbose && console.log('new notes: ', outNotes);
+    verbose && console.log('obfsPrime: ', obfsPrime);
 
     const aggNote = product(outNotes.map(x => x.commitment)) * obfsPrime;
 
-    console.log('aggNote: ', aggNote);
+    verbose && console.log('aggNote: ', aggNote);
 
     const input = {
         aggNote: numberToArray(aggNote, w, ba[nBits]),
@@ -142,7 +144,7 @@ async function testReceive(nBits, ANote, ASn, availableNotes, inNotes, vArr, vOu
     const NInNote = inNotes.length;
     const NOutNote = vArr.length;
 
-    console.log('in notes: ', inNotes);
+    verbose && console.log('in notes: ', inNotes);
 
     const outNotes = [];
     for (let i = 0; i < NOutNote; i += 1) {
@@ -151,26 +153,26 @@ async function testReceive(nBits, ANote, ASn, availableNotes, inNotes, vArr, vOu
         availableNotes.push(n);
     }
 
-    console.log('out notes: ', outNotes);
+    verbose && console.log('out notes: ', outNotes);
 
     const obfsPrimeArr = [
         await generateLargePrime(bpBits[nBits][NInNote]), // for ASn
         await generateLargePrime(bpBits[nBits][NOutNote]), // for ANote
     ];
 
-    console.log('obfsPrime: ', obfsPrimeArr);
+    verbose && console.log('obfsPrime: ', obfsPrimeArr);
 
     const aggSn = product(inNotes.map(x => x.note.sn)) * obfsPrimeArr[0];
     const aggNote = product(outNotes.map(x => x.commitment)) * obfsPrimeArr[1];
 
-    console.log('aggSn: ', aggSn);
-    console.log('aggNote: ', aggNote);
+    verbose && console.log('aggSn: ', aggSn);
+    verbose && console.log('aggNote: ', aggNote);
 
     const PNote = ANote.memWitCreateStar(inNotes.map(x => x.commitment));
     const [PSn_a, PSn_B] = ASn.nonMemWitCreateStar(inNotes.map(x => x.note.sn));
 
-    console.log('membership proof of ANote: ', PNote);
-    console.log('non-membership proof of ASn: ', [PSn_a, PSn_B]);
+    verbose && console.log('membership proof of ANote: ', PNote);
+    verbose && console.log('non-membership proof of ASn: ', [PSn_a, PSn_B]);
 
     const input = {
         modulusANote: numberToArray(ANote.n, w, bAcc[nBits]),
