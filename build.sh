@@ -8,14 +8,14 @@ mkdir -p circuits/3072/out/
 cd circuits
 
 # build MiMCHasher
-circom --r1cs --sym --wasm --O2 MiMCHasher.circom -o out
+circom --r1cs --wasm --O2 MiMCHasher.circom -o out
 snarkjs groth16 setup out/MiMCHasher.r1cs powersOfTau28_hez_final_18.ptau out/MiMCHasher_0001.zkey
 
 # build Send and Receive
 for bit in 1024 2048 3072
 do
-    circom --r1cs --sym --wasm --O2 $bit/Send.circom -o $bit/out
-    circom --r1cs --sym --wasm --O2 $bit/Receive.circom -o $bit/out
+    circom --r1cs --wasm --O2 $bit/Send.circom -o $bit/out
+    circom --r1cs --wasm --O2 $bit/Receive.circom -o $bit/out
 done
 
 for bit in 1024 2048 3072
