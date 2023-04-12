@@ -10,14 +10,14 @@ BigInt.prototype.toJSON = function () { return this.toString(); }
 const w = 121;
 const M = 3;
 const ba = {
-    1024: 10,
-    2048: 18,
-    3072: 27,
+    1024: 11,
+    2048: 19,
+    3072: 28,
 };
 const bp = {
-    1024: 7,
-    2048: 15,
-    3072: 24,
+    1024: 8,
+    2048: 16,
+    3072: 25,
 };
 const bAcc = {
     1024: 9,
@@ -26,14 +26,17 @@ const bAcc = {
 };
 const bpBits = {
     1024: {
+        1: 903,
         2: 782,
         3: 661,
     },
     2048: {
+        1: 1927,
         2: 1806,
         3: 1685,
     },
     3072: {
+        1: 2951,
         2: 2830,
         3: 2709,
     },
@@ -226,7 +229,7 @@ async function testReceive(nBits, ANote, ASn, availableNotes, inNotes, vArr, vOu
     ANote.add(aggNote);
 }
 
-async function main() {
+async function main2() {
     for (const nBits of [1024, 2048, 3072]) {
         console.log(`!!! nBits: ${nBits} !!!`);
 
@@ -247,6 +250,28 @@ async function main() {
         console.log('\n=== Test: Receive, in 3 notes (8, 7, 10), out 3 notes (0, 0, 1) + 24 coins ===');
         inNotes = [availableNotes.pop(), availableNotes.pop(), availableNotes.pop()];
         await testReceive(nBits, ANote, ASn, availableNotes, inNotes, [0n, 0n, 1n], 24n);
+
+        console.log('\n');
+    }
+}
+
+async function main() {
+    for (const nBits of [1024, 2048, 3072]) {
+        console.log(`!!! nBits: ${nBits} !!!`);
+
+        console.time('accumulator setup time');
+        const ANote = await RsaAcc.setup(nBits);
+        const ASn = await RsaAcc.setup(nBits);
+        console.timeEnd('accumulator setup time');
+
+        const availableNotes = [];
+
+        console.log('=== Test: Send, in 10 coins, out 1 notes (10) ===');
+        await testSend(nBits, ANote, availableNotes, [10n]);
+
+        console.log('\n=== Test: Receive, in 1 notes (10), out 1 notes (7) + 3 coins ===');
+        let inNotes = [availableNotes.pop()];
+        await testReceive(nBits, ANote, ASn, availableNotes, inNotes, [7n], 3n);
 
         console.log('\n');
     }
