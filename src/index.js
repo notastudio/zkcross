@@ -231,7 +231,7 @@ async function testReceive(nBits, ANote, ASn, availableNotes, inNotes, vArr, vOu
     ANote.add(aggNote);
 }
 
-async function main2() {
+async function test_main() {
     for (const nBits of [1024, 2048, 3072]) {
         console.log(`!!! nBits: ${nBits} !!!`);
 
@@ -257,7 +257,7 @@ async function main2() {
     }
 }
 
-async function main() {
+async function test_singleNote() {
     for (const nBits of [1024, 2048, 3072]) {
         console.log(`!!! nBits: ${nBits} !!!`);
 
@@ -279,6 +279,28 @@ async function main() {
     }
 }
 
-main().then(() => {
+async function test_2in2out() {
+    for (const nBits of [1024, 2048, 3072]) {
+        console.log(`!!! nBits: ${nBits} !!!`);
+
+        console.time('accumulator setup time');
+        const ANote = await RsaAcc.setup(nBits);
+        const ASn = await RsaAcc.setup(nBits);
+        console.timeEnd('accumulator setup time');
+
+        const availableNotes = [];
+
+        console.log('=== Test: Send, in 20 coins, out 2 notes (10, 10) ===');
+        await testSend(nBits, ANote, availableNotes, [10n, 10n]);
+
+        console.log('\n=== Test: Receive, in 2 notes (10, 10), out 2 notes (7, 8) + 5 coins ===');
+        let inNotes = [availableNotes.pop(), availableNotes.pop()];
+        await testReceive(nBits, ANote, ASn, availableNotes, inNotes, [7n, 8n], 5n);
+
+        console.log('\n');
+    }
+}
+
+test_2in2out().then(() => {
     process.exit(0);
 }).catch(console.log);
